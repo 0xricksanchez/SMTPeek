@@ -1,0 +1,39 @@
+[package]
+name = "smtpeek"
+version = "1.0.0"
+repository = "https://github.com/0xricksanchez/SMTPeek"
+keywords = [
+  "pentesting",
+  "red-team",
+  "penetration-testing",
+  "smtp-enumeration",
+  "smtp-user-enum",
+]
+edition = "2024"
+license = "Apache-2.0"
+authors = ["434b <mail@0x434b.dev>"]
+description = "A state-of-the-art SMTP user enumeration tool that efficiently tests for valid email accounts on SMTP servers while evading detection mechanisms."
+
+[[bin]]
+name = "smtpeek"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1.44.2", features = ["full"] }
+clap = { version = "4.5.36", features = ["derive"] }
+colored = "3.0.0"
+futures = "0.3.31"
+indicatif = "0.17.11"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+hostname = "0.4.1"
+tokio-rustls = "0.26.2"
+rustls-platform-verifier = "0.5.1"
+rustls = { version = "0.23.26", features = ["aws-lc-rs"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+strip = true
+panic = "abort"
