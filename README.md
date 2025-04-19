@@ -13,8 +13,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/crates/v/smtpeek" alt="Crates.io">
-  <img src="https://img.shields.io/github/license/0xricksanchez/SMTPeek" alt="License">
+  <a href="https://crates.io/crates/smtpeek"><img src="https://img.shields.io/crates/v/smtpeek" alt="Crates.io"></a>
+  <a href="https://github.com/0xricksanchez/SMTPeek/blob/main/LICENSE"><img src="https://img.shields.io/github/license/0xricksanchez/SMTPeek" alt="License"></a>
 </p>
 
 ---
