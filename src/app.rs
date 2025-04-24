@@ -654,17 +654,23 @@ impl App {
                     }
 
                     // --- Process Output & Progress ---
-                    if live_mode || verbose{
+                    // Determine if the result should be printed to the console immediately by this worker
+                    let print_to_console_now = match output_format {
+                        OutputFormat::Standard => live_mode || verbose, // Standard: Print if live OR verbose
+                        _ => true, // Non-Standard (JSON/CSV/Machine): Always print immediately to stdout
+                    };
+
+                    // Print to console if needed (handles all console output cases within the worker)
+                    if print_to_console_now {
+                        // This single call correctly handles:
+                        // - Standard format + Live Mode (prints SUCC/FAIL line to stderr)
+                        // - Standard format + Verbose Mode (prints full line, though summary loop might repeat)
+                        // - Non-Standard formats (prints JSON/CSV/Machine line to stdout)
                         output_handler_task.print_result(&result);
                     }
 
                     // --- Process Output/Progress based on format ---
-                    if output_format == OutputFormat::Standard {
-                        // Standard format: Handle live results/progress bar/on-the-fly valid prints
-                        if live_mode {
-                             // print_result handles Standard+Live case -> prints SUCC/FAIL to stderr
-                             output_handler_task.print_result(&result);
-                        } else { // Not live mode (Progress bar OR just final summary)
+                    if output_format == OutputFormat::Standard && !live_mode {
                              if let Some(pb) = &progress_bar_task {
                                  // Progress bar active
                                  if result.status == UserStatus::Valid {
@@ -678,14 +684,9 @@ impl App {
                                      pb.println(formatted_output); // Goes to stderr
                                  }
                                  pb.inc(1); // Increment progress bar
-                             }
-                             // If verbose AND not live, the final summary loop might print results later.
-                             // If NOT verbose and NOT live, only valid users printed on the fly.
-                        }
-                    } else {
-                        // Non-Standard format: Print structured data directly to stdout
-                        // print_result handles JSON/CSV/Machine output to stdout
-                        output_handler_task.print_result(&result);
+                            }
+                            // NOTE: If verbose is also true here, the final summary loop might print again.
+                            // If verbose is false, only valid users were printed above.
                     }
 
                     // --- Delay ---
